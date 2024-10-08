@@ -177,7 +177,7 @@ namespace Task1
                 }
                 if (ValidUsername == 3)
                 {
-                    Console.WriteLine("Should start with a letter.");
+                    Console.WriteLine("Username Should start with a letter.");
                     continue;
                 }
                 if (!Authantic)
