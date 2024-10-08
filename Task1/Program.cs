@@ -50,6 +50,29 @@ namespace Task1
                 Password = Pass;
             }
             public User(){}
+            static int ValidUsername(string username)
+            {
+                // 1: username is emtpy or null.
+                // 2: length less than 4.
+                // 3: doesn't start with a letter.
+                if (string.IsNullOrEmpty(username))
+                    return 1;
+                if (username.Length < 4)
+                    return 2;
+                if (!char.IsLetter(username.First()))
+                    return 3;
+                return 0;
+            }
+            static int ValidPassword(string password)
+            {
+                // 1: password is emtpy or null.
+                // 2: length less than 6.
+                if (string.IsNullOrEmpty(password))
+                    return 1;
+                if (password.Length < 4)
+                    return 2;
+                return 0;
+            }
             public string Username
             {
                 get 
@@ -58,20 +81,21 @@ namespace Task1
                 }
                 set 
                 {
-                    if (!string.IsNullOrEmpty(value))
+                    value = value.Trim();
+                    switch (ValidUsername(value))
                     {
-                        value = value.Trim();
-                        if (value.Length >= 4 && char.IsLetter(value.First()))
-                            _username = value;
-                        else
-                            throw new Exception("Username must be at least 4 charecters and start with a letter.");
-                    }
-                    else
-                    {
-                        throw new Exception("Username is Empty or Null.");
+                        default:
+                            _username = value; break;
+                        case 1:
+                            throw new Exception("Username is Empty or Null."); break;
+                        case 2:
+                            throw new Exception("Username must be at least 4 charecters."); break;
+                        case 3:
+                            throw new Exception("Username must start with a letter."); break;
                     }
                 }
             }
+            
             public string Password
             { 
                 get 
@@ -80,19 +104,17 @@ namespace Task1
                 } 
                 set 
                 {
-                    if (!string.IsNullOrEmpty(value))
+                    value = value.Trim();
+                    switch (ValidUsername(value))
                     {
-                        value = value.Trim();
-                        if (value.Length >= 6)
-                            _password = value;
-                        else
-                            throw new Exception("Password must be at least 6 charecters.");
+                        default:
+                            _password = value; break;
+                        case 1:
+                            throw new Exception("Password is Empty or Null."); break;
+                        case 2:
+                            throw new Exception("Password must be at least 6 charecters."); break;
                     }
-                    else
-                    {
-                        throw new Exception("Password is Empty or Null.");
-                    }
-                } 
+                }
             }
             public bool Validate(string name, string Pass)
             {
@@ -119,10 +141,9 @@ namespace Task1
             }
         }
         
-
         static void Main(string[] args)
         {
-            User user1 = new User("Ahmed Hazim", "Ahmed1234");
+            User user1 = new User("Ahmed Hazim", "Ahmed123");
             string Username = Input.GetStr("Username: ");
             string Password = Input.GetStr("Password: ");
 
