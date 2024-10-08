@@ -126,7 +126,11 @@ namespace Task1
             private int _otpNumber;
             public Otp()
             {
-                _otpNumber = new Random().Next(100000, 999999);
+                _otpNumber = GenearateRandomInt(100000, 999999);
+            }
+            private int GenearateRandomInt(int from, int to)
+            {
+                return new Random().Next(from, to);
             }
             public bool Validate(int Num)
             {
