@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.Design;
 using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Xml;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Task1
 {
@@ -50,7 +53,7 @@ namespace Task1
                 Password = Pass;
             }
             public User(){}
-            static int ValidUsername(string username)
+            public static int ValidUsername(string username)
             {
                 // 1: username is emtpy or null.
                 // 2: length less than 4.
@@ -63,13 +66,13 @@ namespace Task1
                     return 3;
                 return 0;
             }
-            static int ValidPassword(string password)
+            public static int ValidPassword(string password)
             {
                 // 1: password is emtpy or null.
                 // 2: length less than 6.
                 if (string.IsNullOrEmpty(password))
                     return 1;
-                if (password.Length < 4)
+                if (password.Length < 6)
                     return 2;
                 return 0;
             }
@@ -116,7 +119,7 @@ namespace Task1
                     }
                 }
             }
-            public bool Validate(string name, string Pass)
+            public bool Authenticate(string name, string Pass)
             {
                 return Username.Equals(name) && Password.Equals(Pass);
             }
@@ -144,40 +147,58 @@ namespace Task1
                 { return _otpNumber; }
             }
         }
-        
+
         static void Main(string[] args)
         {
             User user1 = new User("Ahmed Hazim", "Ahmed123");
-            string Username = Input.GetStr("Username: ");
-            string Password = Input.GetStr("Password: ");
-
-            if (user1.Validate(Username, Password))
+            Console.WriteLine("Welcome to the Simple Login System!");
+            
+            //Validating User input data
+            bool ValidUser = false;
+            while (!ValidUser)
             {
-                Otp otp = new Otp();
-                Console.WriteLine(otp.OtpNumber);
-                
-                bool ValidOtp = false;
-                while(!ValidOtp)
+                string Username = Input.GetStr("Username: ");
+                string Password = Input.GetStr("Password: ");
+                int ValidUsername = User.ValidUsername(Username);
+                int ValidPassword = User.ValidPassword(Password);
+                bool Authantic = user1.Authenticate(Username, Password);
+
+                if (ValidUsername == 0 && ValidPassword == 0 && Authantic)
                 {
-                    int num = Input.GetInt("Enter the OTP Code: ");
-                    ValidOtp = otp.Validate(num);
-
-                    if (ValidOtp)
-                    {
-                        Console.WriteLine("Logged in!");
-                        break;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Incorect OTP, Please try again.");
-                    }
+                    break;
                 }
-                
+                if (ValidUsername == 1 || ValidPassword == 1)
+                {
+                    Console.WriteLine("Username or password cannot be empty.");
+                    continue;
+                }
+                else if (ValidUsername == 2 || ValidPassword == 2)
+                {
+                    Console.WriteLine("Length for the Username must be 4 And 6 for the password.");
+                    continue;
+                }
+                if (ValidUsername == 3)
+                {
+                    Console.WriteLine("Should start with a letter.");
+                    continue;
+                }
+                if (!Authantic)
+                {
+                    Console.WriteLine("Invalid username or password. Access denied.");
+                    System.Environment.Exit(1);
+                }
             }
+
+            //Validating User input for OTP
+            Otp otp = new Otp();
+            Console.WriteLine(otp.OtpNumber);
+            int num = Input.GetInt("Enter the OTP Code: ");
+            bool ValidOtp = otp.Validate(num);
+
+            if (ValidOtp)
+                Console.WriteLine("Success! You are logged in.");
             else
-            {
-                Console.WriteLine("Invalid Username Or Password.");
-            }
+                Console.WriteLine("Invalid OTP. Access denied.");
         }
     }
 
