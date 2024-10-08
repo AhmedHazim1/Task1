@@ -21,26 +21,24 @@ namespace Task1
             public static int GetInt(string Prompt = "Enter an integer: ", int MaxValue = int.MaxValue, int MinValue = int.MinValue)
             {
                 Console.Write(Prompt);
-                string Inp = Console.ReadLine();
-                Inp = string.IsNullOrEmpty(Inp) == true ? "" : Inp;
-                try
+                string Inp = Console.ReadLine();                
+                if (ValidInt(Inp))
                 {
-                    if (int.TryParse(Inp, out int Num))
-                    {
-                        if (Num <= MaxValue && Num >= MinValue)
-                            return Num;
-                        else
-                            throw new Exception($"Number must be bettwen {MinValue} : {MaxValue}.");
-                    }
+                    int Num = int.Parse(Inp);
+                    if (Num <= MaxValue && Num >= MinValue)
+                        return Num;
                     else
-                    {
-                        throw new Exception("This isn't a valid number.");
-                    }
-                }
-                catch
+                        throw new Exception($"Number must be bettwen {MinValue} : {MaxValue}.");
+                }                
+                else
                 {
-                    return 0;
+                    throw new Exception($"Not a valid integer.");
                 }
+            }
+            static bool ValidInt(string X)
+            {
+                X = string.IsNullOrEmpty(X) ? "" : X;
+                return int.TryParse(X, out int n);
             }
         }
         class User
@@ -192,13 +190,19 @@ namespace Task1
             //Validating User input for OTP
             Otp otp = new Otp();
             Console.WriteLine(otp.OtpNumber);
-            int num = Input.GetInt("Enter the OTP Code: ");
-            bool ValidOtp = otp.Validate(num);
-
-            if (ValidOtp)
-                Console.WriteLine("Success! You are logged in.");
-            else
-                Console.WriteLine("Invalid OTP. Access denied.");
+            try
+            {
+                int num = Input.GetInt("Enter the OTP Code: ");
+                bool ValidOtp = otp.Validate(num);
+                if (ValidOtp)
+                    Console.WriteLine("Success! You are logged in.");
+                else                    
+                    Console.WriteLine("Invalid OTP. Access denied.");
+            }
+            catch(Exception ex) 
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 
